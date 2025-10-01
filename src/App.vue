@@ -1,9 +1,11 @@
 <template>
   <div class="h-screen overflow-hidden p-4 bg-gray-50">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-auto">
       <!-- Card izquierda: Entradas -->
       <!----------------------------->
-      <article class="flex flex-col rounded-xl border bg-white shadow-sm">
+      <article
+        class="flex flex-col rounded-xl border bg-white shadow-sm overflow-auto"
+      >
         <header
           class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl"
         >
@@ -69,7 +71,7 @@
             <!--------------------->
             <div
               v-if="e.productoKey"
-              class="text-xs text-gray-700 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2"
+              class="text-xs text-gray-700 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 overflow-auto"
             >
               <div v-for="col in columnas" :key="col.key">
                 <span class="text-gray-500">{{ col.label }}:</span>
