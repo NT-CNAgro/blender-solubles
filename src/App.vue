@@ -108,9 +108,17 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <!-- Fila 1: Aportes netos -->
+                <tr class="bg-white">
                   <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
                     {{ totales[col.key].toFixed(2) }}
+                  </td>
+                </tr>
+
+                <!-- Fila 2: Porcentajes -->
+                <tr class="bg-gray-50 text-gray-700">
+                  <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
+                    {{ porcentajes[col.key].toFixed(2) }}%
                   </td>
                 </tr>
               </tbody>
@@ -152,7 +160,21 @@
 
 <script setup lang="ts">
 import { reactive, computed } from "vue";
+const totalCantidad = computed(() =>
+  entradas.reduce((acc, e) => acc + (e.cantidad || 0), 0)
+);
 
+const porcentajes = computed(() => {
+  const result: Record<NutrKey, number> = {} as any;
+  for (const k of Object.keys(totales.value) as NutrKey[]) {
+    // evita división por cero
+    result[k] =
+      totalCantidad.value > 0
+        ? (totales.value[k] / totalCantidad.value) * 100
+        : 0;
+  }
+  return result;
+});
 /**
  * Columnas estándar del balance
  */
