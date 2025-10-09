@@ -1,44 +1,28 @@
 <template>
   <div class="h-screen overflow-hidden p-4 bg-gray-50">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-auto">
       <!-- Card izquierda: Entradas -->
       <!----------------------------->
-      <article class="flex flex-col rounded-xl border bg-white shadow-sm">
-        <header
-          class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl"
-        >
+      <article class="flex flex-col rounded-xl border bg-white shadow-sm overflow-auto">
+        <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Entradas de mezcla</h2>
         </header>
 
         <div class="min-h-0 grow overflow-y-auto p-4 space-y-4">
           <div class="flex items-center justify-between">
-            <button
-              class="px-3 py-2 text-sm rounded-lg border hover:bg-gray-50"
-              @click="agregarEntrada()"
-            >
+            <button class="px-3 py-2 text-sm rounded-lg border hover:bg-gray-50" @click="agregarEntrada()">
               + Agregar componente
             </button>
             <small class="text-gray-500">Aportes definidos por 100 kg</small>
           </div>
 
-          <div
-            v-for="(e, idx) in entradas"
-            :key="e.id"
-            class="rounded-lg border p-3 space-y-3"
-          >
+          <div v-for="(e, idx) in entradas" :key="e.id" class="rounded-lg border p-3 space-y-3">
             <div class="flex gap-3 items-end">
               <div class="grow">
                 <label class="block text-xs font-medium">Producto</label>
-                <select
-                  v-model="e.productoKey"
-                  class="mt-1 w-full border rounded p-2"
-                >
+                <select v-model="e.productoKey" class="mt-1 w-full border rounded p-2">
                   <option disabled value="">Selecciona…</option>
-                  <option
-                    v-for="(def, key) in fertilizantes"
-                    :key="key"
-                    :value="key"
-                  >
+                  <option v-for="(def, key) in fertilizantes" :key="key" :value="key">
                     {{ def.nombre }}
                   </option>
                 </select>
@@ -46,36 +30,25 @@
 
               <div class="w-40">
                 <label class="block text-xs font-medium">Cantidad (kg)</label>
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  v-model.number="e.cantidad"
-                  class="mt-1 w-full border rounded p-2"
-                  placeholder="0"
-                />
+                <input type="number" min="0" step="any" v-model.number="e.cantidad"
+                  class="mt-1 w-full border rounded p-2" placeholder="0" />
               </div>
 
-              <button
-                class="h-9 px-3 text-sm rounded-lg border hover:bg-red-50 hover:border-red-300"
-                @click="eliminarEntrada(idx)"
-                v-if="entradas.length > 1"
-              >
+              <button class="h-9 px-3 text-sm rounded-lg border hover:bg-red-50 hover:border-red-300"
+                @click="eliminarEntrada(idx)" v-if="entradas.length > 1">
                 Eliminar
               </button>
             </div>
 
             <!-- Aportes por fila -->
             <!--------------------->
-            <div
-              v-if="e.productoKey"
-              class="text-xs text-gray-700 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2"
-            >
+            <div v-if="e.productoKey"
+              class="text-xs text-gray-700 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 overflow-auto">
               <div v-for="col in columnas" :key="col.key">
                 <span class="text-gray-500">{{ col.label }}:</span>
                 <span class="ml-1 font-medium">{{
                   aporteFila(e)[col.key].toFixed(2)
-                }}</span>
+                  }}</span>
               </div>
             </div>
           </div>
@@ -84,9 +57,7 @@
 
       <!-- Card derecha: Totales -->
       <article class="flex flex-col rounded-xl border bg-white shadow-sm">
-        <header
-          class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl"
-        >
+        <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Totales</h2>
         </header>
 
@@ -96,19 +67,23 @@
             <table class="min-w-full text-sm">
               <thead class="bg-gray-50">
                 <tr>
-                  <th
-                    v-for="col in columnas"
-                    :key="col.key"
-                    class="px-3 py-2 text-left font-medium text-gray-600"
-                  >
+                  <th v-for="col in columnas" :key="col.key" class="px-3 py-2 text-left font-medium text-gray-600">
                     {{ col.label }}
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
+                <!-- Fila 1: Aportes netos -->
+                <tr class="bg-white">
                   <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
                     {{ totales[col.key].toFixed(2) }}
+                  </td>
+                </tr>
+
+                <!-- Fila 2: Porcentajes -->
+                <tr class="bg-gray-50 text-gray-700">
+                  <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
+                    {{ porcentajes[col.key].toFixed(2) }}%
                   </td>
                 </tr>
               </tbody>
@@ -121,22 +96,71 @@
               Ver desglose por componente
             </summary>
             <div class="mt-3 space-y-3">
-              <div
-                v-for="(e, i) in entradas"
-                :key="'det-' + e.id"
-                class="rounded border p-2"
-              >
+              <div v-for="(e, i) in entradas" :key="'det-' + e.id" class="rounded border p-2">
                 <div class="text-sm font-semibold">
                   {{ tituloEntrada(e, i) }}
                 </div>
-                <div
-                  class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs"
-                >
+                <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
                   <div v-for="col in columnas" :key="col.key">
                     <span class="text-gray-500">{{ col.label }}:</span>
                     <span class="ml-1 font-medium">{{
                       aporteFila(e)[col.key].toFixed(2)
-                    }}</span>
+                      }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
+
+          <details class="rounded-lg border p-3">
+            <summary class="cursor-pointer text-sm font-medium">
+              Propiedades de la mezcla (1 t)
+            </summary>
+
+            <div class="mt-3 space-y-3">
+              <!-- pH -->
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">pH estimado</div>
+                <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
+                  <div class="col-span-2 md:col-span-1">
+                    <span class="text-gray-500">Valor:</span>
+                    <span class="ml-1 font-medium">{{ phMezcla.toFixed(2) }}</span>
+                  </div>
+                  <div class="md:col-span-4 text-gray-500">
+                    Fórmula: Σ(pH × kg ajustado a 1 t) / 1000
+                  </div>
+                </div>
+              </div>
+
+              <!-- CE -->
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">Conductividad eléctrica</div>
+                <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
+                  <div class="col-span-2 md:col-span-1">
+                    <span class="text-gray-500">Valor:</span>
+                    <span class="ml-1 font-medium">
+                      {{ ceMezcla.toFixed(2) }} <span class="font-normal text-gray-600">dS/m</span>
+                    </span>
+                  </div>
+                  <div class="md:col-span-4 text-gray-500">
+                    Fórmula: Σ(CE × kg ajustado a 1 t) / 1000
+                  </div>
+                </div>
+              </div>
+
+              <!-- Solubilidad -->
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">Solubilidad a 20 °C</div>
+                <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
+                  <div class="col-span-2 md:col-span-1">
+                    <span class="text-gray-500">Valor:</span>
+                    <span class="ml-1 font-medium">
+                      {{ solMezcla.toFixed(0) }} <span class="font-normal text-gray-600">g/L</span>
+                    </span>
+                  </div>
+                  <div class="md:col-span-4 text-gray-500">
+                    Fórmula: Σ(Sol × kg ajustado a 1 t) / 1000
                   </div>
                 </div>
               </div>
@@ -150,7 +174,21 @@
 
 <script setup lang="ts">
 import { reactive, computed } from "vue";
+const totalCantidad = computed(() =>
+  entradas.reduce((acc, e) => acc + (e.cantidad || 0), 0)
+);
 
+const porcentajes = computed(() => {
+  const result: Record<NutrKey, number> = {} as any;
+  for (const k of Object.keys(totales.value) as NutrKey[]) {
+    // evita división por cero
+    result[k] =
+      totalCantidad.value > 0
+        ? (totales.value[k] / totalCantidad.value) * 100
+        : 0;
+  }
+  return result;
+});
 /**
  * Columnas estándar del balance
  */
@@ -194,6 +232,12 @@ const fertilizantes: Record<
       N_NH4: 1.1,
       CaO: 26.5,
     },
+    ficha: {
+      ph: 5.09,
+      sol: 1000,
+      Ce: 1.16,
+    },
+
   },
 
   // NITRATO DE POTASIO
@@ -204,6 +248,11 @@ const fertilizantes: Record<
       K: 45.0, // desde K2O según tu dato
       Cl: 0.5,
     },
+    ficha: {
+      ph: 7.1,
+      sol: 379,
+      Ce: 1.31,
+    },
   },
 
   // Ácido Bórico
@@ -211,6 +260,11 @@ const fertilizantes: Record<
     nombre: "Ácido Bórico",
     por100: {
       B: 17,
+    },
+    ficha: {
+      ph: 4.3,
+      sol: 75,
+      Ce: 0,
     },
   },
 
@@ -221,6 +275,11 @@ const fertilizantes: Record<
       N_NH4: 12,
       P: 60,
     },
+    ficha: {
+      ph: 4.9,
+      sol: 332,
+      Ce: 0.83,
+    },
   },
 
   // Fosfato monopotásico
@@ -229,6 +288,11 @@ const fertilizantes: Record<
     por100: {
       P: 52,
       K: 34,
+    },
+    ficha: {
+      ph: 4.1,
+      sol: 248,
+      Ce: 0.76,
     },
   },
 
@@ -239,6 +303,11 @@ const fertilizantes: Record<
       K: 60, // desde K2O según tu dato
       Cl: 48,
     },
+    ficha: {
+      ph: 5.7,
+      sol: 352,
+      Ce: 1.79,
+    },
   },
 
   // Nitrato de magnesio
@@ -247,6 +316,11 @@ const fertilizantes: Record<
     por100: {
       N_NO3: 11.5,
       MgO: 15.0,
+    },
+    ficha: {
+      ph: 5.56,
+      sol: 1000,
+      Ce: 0.85,
     },
   },
 
@@ -257,6 +331,11 @@ const fertilizantes: Record<
       N_NH4: 21,
       S: 22,
     },
+    ficha: {
+      ph: 5.5,
+      sol: 723,
+      Ce: 1.91,
+    },
   },
 
   // Sulfato de Magnesio Heptahidratado
@@ -265,6 +344,11 @@ const fertilizantes: Record<
     por100: {
       MgO: 16,
       S: 13,
+    },
+    ficha: {
+      ph: 4.02,
+      sol: 540,
+      Ce: 0.73,
     },
   },
 
@@ -275,6 +359,11 @@ const fertilizantes: Record<
       MgO: 32,
       S: 26,
     },
+    ficha: {
+      ph: 5.73,
+      sol: 430,
+      Ce: 1.28,
+    },
   },
 
   // Sulfato de Manganeso
@@ -283,6 +372,11 @@ const fertilizantes: Record<
     por100: {
       Mn: 32,
       S: 36,
+    },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
     },
   },
 
@@ -293,6 +387,11 @@ const fertilizantes: Record<
       K: 51, // desde K2O según tu dato
       S: 17.4,
     },
+    ficha: {
+      ph: 7,
+      sol: 184,
+      Ce: 1.47,
+    },
   },
 
   // Sulfato de Zinc Heptahidratado
@@ -302,6 +401,11 @@ const fertilizantes: Record<
       Zn: 22,
       S: 19,
     },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
+    },
   },
 
   // Fosfato de urea
@@ -310,6 +414,11 @@ const fertilizantes: Record<
     por100: {
       N_URE: 16,
       P: 45,
+    },
+    ficha: {
+      ph: 1.8,
+      sol: 300,
+      Ce: 1.51,
     },
   },
 
@@ -321,6 +430,11 @@ const fertilizantes: Record<
       N_NH4: 18.5,
       S: 13,
     },
+    ficha: {
+      ph: 5.38,
+      sol: 714,
+      Ce: 1.7,
+    },
   },
 
   // Urea granulada
@@ -328,6 +442,11 @@ const fertilizantes: Record<
     nombre: "Urea granulada",
     por100: {
       N_URE: 46,
+    },
+    ficha: {
+      ph: 5.8,
+      sol: 1080,
+      Ce: 0.02,
     },
   },
 
@@ -337,6 +456,11 @@ const fertilizantes: Record<
     por100: {
       Fe: 6,
     },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
+    },
   },
 
   // Folikel Zn EDTA
@@ -344,6 +468,11 @@ const fertilizantes: Record<
     nombre: "Folikel Zn EDTA",
     por100: {
       Zn: 15,
+    },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
     },
   },
 
@@ -353,6 +482,11 @@ const fertilizantes: Record<
     por100: {
       Cu: 23,
     },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
+    },
   },
 
   // Fertitec 21% + DMPP
@@ -361,6 +495,11 @@ const fertilizantes: Record<
     por100: {
       N_NH4: 4.5,
       S: 22,
+      ficha: {
+        ph: 5.5,
+        sol: 723,
+        Ce: 1.91,
+      },
     },
   },
 };
@@ -454,6 +593,34 @@ const totales = computed(() => {
   return acc;
 });
 
+
+const objetivoKg = 1000
+const factorEscala = computed(() =>
+  totalCantidad.value > 0 ? objetivoKg / totalCantidad.value : 0
+)
+
+type Proporcion = { id: number; nombre: string; kg_1t: number; porcentaje: number }
+
+const proporciones1t = computed<Proporcion[]>(() => {
+  const f = factorEscala.value
+  return entradas.map((e, i) => {
+    const nombre = fertilizantes[e.productoKey]?.nombre ?? `Componente ${i + 1}`
+    const kg1t = (e.cantidad || 0) * f
+    const pct = totalCantidad.value > 0 ? ((e.cantidad || 0) / totalCantidad.value) * 100 : 0
+    return { id: e.id, nombre, kg_1t: kg1t, porcentaje: pct }
+  })
+})
+
+const phMezcla = computed(() => {
+  // suma ponderada: (pH_i * kg_1t_i)
+  const sumatoria = proporciones1t.value.reduce((acc, e) => {
+    const ph = fertilizantes[entradas.find(x => x.id === e.id)?.productoKey || '']?.ficha?.ph
+    if (ph && e.kg_1t) acc += ph * e.kg_1t
+    return acc
+  }, 0)
+  return sumatoria > 0 ? sumatoria / 1000 : 0
+})
+
 function tituloEntrada(
   e: { productoKey: string; cantidad: number },
   i: number
@@ -461,6 +628,36 @@ function tituloEntrada(
   const name = fertilizantes[e.productoKey]?.nombre ?? `Componente ${i + 1}`;
   return `${name} — ${e.cantidad || 0} kg`;
 }
+
+const ceMezcla = computed(() => {
+  // suma ponderada: (CE_i * kg_1t_i) / 1000
+  const sumatoria = proporciones1t.value.reduce((acc, row) => {
+    const entrada = entradas.find(e => e.id === row.id)
+    const def = entrada ? fertilizantes[entrada.productoKey] : undefined
+    const ce = def?.ficha?.ce
+    if (typeof ce === 'number' && row.kg_1t) {
+      acc += ce * row.kg_1t
+    }
+    return acc
+  }, 0)
+  return sumatoria > 0 ? sumatoria / 1000 : 0
+})
+
+
+const solMezcla = computed(() => {
+  const sumatoria = proporciones1t.value.reduce((acc, row) => {
+    const entrada = entradas.find(e => e.id === row.id)
+    const def = entrada ? fertilizantes[entrada.productoKey] : undefined
+    const sol = def?.ficha?.sol
+    if (typeof sol === 'number' && row.kg_1t) {
+      acc += sol * row.kg_1t
+    }
+    return acc
+  }, 0)
+  return sumatoria > 0 ? sumatoria / 1000 : 0  // g/L @20°C
+})
+
+
 </script>
 
 <style>
