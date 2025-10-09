@@ -1,31 +1,77 @@
 @import "tailwindcss";
 
+/* === Fallbacks de borde y divide con tema oscuro grafito === */
+@layer base {
+  :root {
+    /* tonos neutros suaves para modo claro */
+    --twc-border: 210 214 220; /* gray-300 */
+    --twc-divide: 210 214 220;
+    --twc-surface: 255 255 255;
+    --twc-text: 33 53 71;
+    --twc-muted: 107 114 128;
+  }
+
+  /* Tema oscuro: grafito, tonos carbón */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --twc-border: 72 77 85;   /* gris grafito medio (#484d55) */
+      --twc-divide: 72 77 85;
+      --twc-surface: 36 36 36;  /* fondo oscuro principal (#242424) */
+      --twc-text: 235 235 235;  /* texto principal */
+      --twc-muted: 160 160 160; /* texto secundario */
+    }
+  }
+
+  /* Si usas clase .dark en html */
+  .dark {
+    --twc-border: 72 77 85;
+    --twc-divide: 72 77 85;
+    --twc-surface: 36 36 36;
+    --twc-text: 235 235 235;
+    --twc-muted: 160 160 160;
+  }
+
+  body {
+    background-color: rgb(var(--twc-surface));
+    color: rgb(var(--twc-text));
+  }
+}
+
+@layer utilities {
+  /* bordes */
+  .border:not([class*="border-"]) { border-color: rgb(var(--twc-border)); }
+  .border-t:not([class*="border-t-"]) { border-top-color: rgb(var(--twc-border)); }
+  .border-b:not([class*="border-b-"]) { border-bottom-color: rgb(var(--twc-border)); }
+  .border-l:not([class*="border-l-"]) { border-left-color: rgb(var(--twc-border)); }
+  .border-r:not([class*="border-r-"]) { border-right-color: rgb(var(--twc-border)); }
+
+  /* divide-y/x */
+  .divide-y > :not([hidden]) ~ :not([hidden]):not([class*="divide-y-"]) {
+    border-top-color: rgb(var(--twc-divide));
+  }
+  .divide-x > :not([hidden]) ~ :not([hidden]):not([class*="divide-x-"]) {
+    border-left-color: rgb(var(--twc-divide));
+  }
+}
+
+/* === tus estilos originales === */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-html, body, #app {
-  height: 100%;
-}
+
+html, body, #app { height: 100%; }
+
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
     background-color: #ffffff;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+  a:hover { color: #747bff; }
+  button { background-color: #f9f9f9; }
 }

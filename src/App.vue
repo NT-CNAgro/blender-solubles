@@ -1,10 +1,10 @@
 <template>
-  <div class="h-screen overflow-hidden p-4 bg-gray-50">
+  <div class="h-screen overflow-hidden p-4 bg-gray-50 dark:bg-gray-900">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-auto">
       <!-- Card izquierda: Entradas -->
       <!----------------------------->
-      <article class="flex flex-col rounded-xl border bg-white shadow-sm overflow-auto">
-        <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl">
+      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm overflow-auto">
+        <header class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Entradas de mezcla</h2>
         </header>
 
@@ -20,7 +20,8 @@
             <div class="flex gap-3 items-end">
               <div class="grow">
                 <label class="block text-xs font-medium">Producto</label>
-                <select v-model="e.productoKey" class="mt-1 w-full border rounded p-2">
+                <select v-model="e.productoKey" class="mt-1 w-full border border-gray-300 dark:border-gray-600 rounded p-2
+               bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                   <option disabled value="">Selecciona…</option>
                   <option v-for="(def, key) in fertilizantes" :key="key" :value="key">
                     {{ def.nombre }}
@@ -30,8 +31,8 @@
 
               <div class="w-40">
                 <label class="block text-xs font-medium">Cantidad (kg)</label>
-                <input type="number" min="0" step="any" v-model.number="e.cantidad"
-                  class="mt-1 w-full border rounded p-2" placeholder="0" />
+                <input type="number" min="0" step="any" v-model.number="e.cantidad" class="mt-1 w-full border border-gray-300 dark:border-gray-600 rounded p-2
+               bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" placeholder="0" />
               </div>
 
               <button class="h-9 px-3 text-sm rounded-lg border hover:bg-red-50 hover:border-red-300"
@@ -43,12 +44,12 @@
             <!-- Aportes por fila -->
             <!--------------------->
             <div v-if="e.productoKey"
-              class="text-xs text-gray-700 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 overflow-auto">
+              class="text-xs text-gray-700 dark:text-gray-200 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 overflow-auto">
               <div v-for="col in columnas" :key="col.key">
-                <span class="text-gray-500">{{ col.label }}:</span>
+                <span class="text-gray-500 dark:text-gray-400">{{ col.label }}:</span>
                 <span class="ml-1 font-medium">{{
                   aporteFila(e)[col.key].toFixed(2)
-                  }}</span>
+                }}</span>
               </div>
             </div>
           </div>
@@ -56,8 +57,8 @@
       </article>
 
       <!-- Card derecha: Totales -->
-      <article class="flex flex-col rounded-xl border bg-white shadow-sm">
-        <header class="sticky top-0 z-10 border-b bg-white/80 backdrop-blur p-3 rounded-t-xl">
+      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm">
+        <header class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Totales</h2>
         </header>
 
@@ -65,23 +66,24 @@
           <!-- Totales tabla -->
           <div class="overflow-auto rounded-lg border">
             <table class="min-w-full text-sm">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th v-for="col in columnas" :key="col.key" class="px-3 py-2 text-left font-medium text-gray-600">
+              <thead class="bg-gray-50 dark:bg-gray-800">
+                <tr class="bg-white dark:bg-gray-800">
+                  <th v-for="col in columnas" :key="col.key"
+                    class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-300">
                     {{ col.label }}
                   </th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 <!-- Fila 1: Aportes netos -->
-                <tr class="bg-white">
+                <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                   <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
                     {{ totales[col.key].toFixed(2) }}
                   </td>
                 </tr>
 
                 <!-- Fila 2: Porcentajes -->
-                <tr class="bg-gray-50 text-gray-700">
+                <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                   <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
                     {{ porcentajes[col.key].toFixed(2) }}%
                   </td>
@@ -91,7 +93,7 @@
           </div>
 
           <!-- Detalle por componente (opcional) -->
-          <details class="rounded-lg border p-3">
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
               Ver desglose por componente
             </summary>
@@ -105,7 +107,7 @@
                     <span class="text-gray-500">{{ col.label }}:</span>
                     <span class="ml-1 font-medium">{{
                       aporteFila(e)[col.key].toFixed(2)
-                      }}</span>
+                    }}</span>
                   </div>
                 </div>
               </div>
@@ -113,7 +115,7 @@
           </details>
 
 
-          <details class="rounded-lg border p-3">
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
               Propiedades de la mezcla (1 t)
             </summary>
