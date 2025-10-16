@@ -127,11 +127,10 @@
                 <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
                   <div class="col-span-2 md:col-span-1">
                     <span class="text-gray-500">Valor:</span>
-                    <span class="ml-1 font-medium">{{ phMezcla.toFixed(2) }}</span>
+                    <span class="ml-1 font-medium">{{ phMezcla.toFixed(2) }} <span class="font-normal text-gray-600">
+                        [1g/L]</span></span>
                   </div>
-                  <div class="md:col-span-4 text-gray-500">
-                    Fórmula: Σ(pH × kg ajustado a 1 t) / 1000
-                  </div>
+
                 </div>
               </div>
 
@@ -139,15 +138,13 @@
               <div class="rounded border p-2">
                 <div class="text-sm font-semibold">Conductividad eléctrica</div>
                 <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
-                  <div class="col-span-2 md:col-span-1">
+                  <div class="col-span-2 md:col-span-1"><span class="font-normal text-gray-600">dS/m [1g/L]</span>
                     <span class="text-gray-500">Valor:</span>
                     <span class="ml-1 font-medium">
-                      {{ ceMezcla.toFixed(2) }} <span class="font-normal text-gray-600">dS/m</span>
+                      {{ ceMezcla.toFixed(2) }} <span class="font-normal text-gray-600">dS/m [1g/L]</span>
                     </span>
                   </div>
-                  <div class="md:col-span-4 text-gray-500">
-                    Fórmula: Σ(CE × kg ajustado a 1 t) / 1000
-                  </div>
+
                 </div>
               </div>
 
@@ -161,9 +158,7 @@
                       {{ solMezcla.toFixed(0) }} <span class="font-normal text-gray-600">g/L</span>
                     </span>
                   </div>
-                  <div class="md:col-span-4 text-gray-500">
-                    Fórmula: Σ(Sol × kg ajustado a 1 t) / 1000
-                  </div>
+
                 </div>
               </div>
             </div>
@@ -248,7 +243,6 @@ const fertilizantes: Record<
     por100: {
       N_NO3: 13.0,
       K: 45.0, // desde K2O según tu dato
-      Cl: 0.5,
     },
     ficha: {
       ph: 7.1,
@@ -636,7 +630,7 @@ const ceMezcla = computed(() => {
   const sumatoria = proporciones1t.value.reduce((acc, row) => {
     const entrada = entradas.find(e => e.id === row.id)
     const def = entrada ? fertilizantes[entrada.productoKey] : undefined
-    const ce = def?.ficha?.ce
+    const ce = def?.ficha?.Ce
     if (typeof ce === 'number' && row.kg_1t) {
       acc += ce * row.kg_1t
     }
