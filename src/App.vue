@@ -117,7 +117,7 @@
 
           <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
-              Propiedades de la mezcla (1 t)
+              Propiedades de la mezcla
             </summary>
 
             <div class="mt-3 space-y-3">
@@ -163,6 +163,24 @@
               </div>
             </div>
           </details>
+          <!-- Nuevo: Porcentajes ajustados (multiplicados por factor de columna) -->
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+            <summary class="cursor-pointer text-sm font-medium">
+              Porcentajes ajustados (factor columnas)
+            </summary>
+
+            <div class="mt-3">
+              <div class="text-xs grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2">
+                <div v-for="col in columnas" :key="col.key" class="truncate">
+                  <div class="text-gray-500">{{ col.key }}:</div>
+                  <div class="ml-1 font-medium">
+                    {{ porcentajesFactor[col.key].toFixed(2) }}%
+                  </div>
+                </div>
+              </div>
+            </div>
+          </details>
+
         </div>
       </article>
     </div>
@@ -186,26 +204,39 @@ const porcentajes = computed(() => {
   }
   return result;
 });
+
+// nuevo: porcentajes multiplicados por el factor de cada columna
+const porcentajesFactor = computed(() => {
+  const result: Record<NutrKey, number> = {} as any;
+  for (const col of columnas) {
+    const key = col.key;
+    const pct = porcentajes.value[key] ?? 0; // porcentaje (0-100)
+    result[key] = pct * (col.factor ?? 1);
+  }
+  return result;
+});
+
+
 /**
  * Columnas estándar del balance
  */
 const columnas = [
-  { key: "N_NO3", label: "N-NO₃" },
-  { key: "N_NH4", label: "N-NH₄" },
-  { key: "N_URE", label: "N-Ureico" },
-  { key: "N", label: "N" },
-  { key: "P", label: "P" },
-  { key: "K", label: "K" },
-  { key: "Cl", label: "Cl" },
-  { key: "S", label: "S" },
-  { key: "MgO", label: "MgO" },
-  { key: "CaO", label: "CaO" },
-  { key: "B", label: "B" },
-  { key: "Fe", label: "Fe" },
-  { key: "Zn", label: "Zn" },
-  { key: "Cu", label: "Cu" },
-  { key: "Mn", label: "Mn" },
-  { key: "Mo", label: "Mo" },
+  { key: "N_NO3", label: "N-NO₃", factor: 1, label2:"" },
+  { key: "N_NH4", label: "N-NH₄", factor: 1 },
+  { key: "N_URE", label: "N-Ureico", factor: 1 },
+  { key: "N", label: "N", factor: 1 },
+  { key: "P", label: "P₂O₅", factor: 0.4364 },
+  { key: "K", label: "K₂O", factor: 0.8302 },
+  { key: "Cl", label: "Cl", factor: 1 },
+  { key: "S", label: "S", factor: 1 },
+  { key: "MgO", label: "MgO", factor: 0.603 },
+  { key: "CaO", label: "CaO", factor: 0.714 },
+  { key: "B", label: "B", factor: 1 },
+  { key: "Fe", label: "Fe", factor: 1 },
+  { key: "Zn", label: "Zn", factor: 1 },
+  { key: "Cu", label: "Cu", factor: 1 },
+  { key: "Mn", label: "Mn", factor: 1 },
+  { key: "Mo", label: "Mo", factor: 1 },
 ] as const;
 
 type NutrKey = (typeof columnas)[number]["key"];
