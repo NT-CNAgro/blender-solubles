@@ -1,9 +1,9 @@
 <template>
   <div class="h-screen overflow-hidden p-4 bg-gray-50 dark:bg-gray-900">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 h-full overflow-auto">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-full overflow-auto">
       <!-- Card izquierda: Entradas -->
       <!----------------------------->
-      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm overflow-auto">
+      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm md:col-span-1">
         <header class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Entradas de mezcla</h2>
         </header>
@@ -57,7 +57,7 @@
       </article>
 
       <!-- Card derecha: Totales -->
-      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm">
+      <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm md:col-span-2">
         <header class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl">
           <h2 class="text-sm font-semibold">Totales</h2>
         </header>
@@ -138,7 +138,7 @@
               <div class="rounded border p-2">
                 <div class="text-sm font-semibold">Conductividad eléctrica</div>
                 <div class="mt-2 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 text-xs">
-                  <div class="col-span-2 md:col-span-1"><span class="font-normal text-gray-600">dS/m [1g/L]</span>
+                  <div class="col-span-2 md:col-span-1"><span class="font-normal text-gray-600"></span>
                     <span class="text-gray-500">Valor:</span>
                     <span class="ml-1 font-medium">
                       {{ ceMezcla.toFixed(2) }} <span class="font-normal text-gray-600">dS/m [1g/L]</span>
