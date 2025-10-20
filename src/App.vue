@@ -23,7 +23,9 @@
                 <select v-model="e.productoKey" class="mt-1 w-full border border-gray-300 dark:border-gray-600 rounded p-2
                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                   <option disabled value="">Selecciona…</option>
-                  <option v-for="(def, key) in fertilizantes" :key="key" :value="key">
+                  <option
+                    v-for="([key, def]) in Object.entries(fertilizantes).sort((a, b) => a[1].nombre.localeCompare(b[1].nombre))"
+                    :key="key" :value="key">
                     {{ def.nombre }}
                   </option>
                 </select>
@@ -221,7 +223,7 @@ const porcentajesFactor = computed(() => {
  * Columnas estándar del balance
  */
 const columnas = [
-  { key: "N_NO3", label: "N-NO₃", factor: 1, label2:"" },
+  { key: "N_NO3", label: "N-NO₃", factor: 1, label2: "" },
   { key: "N_NH4", label: "N-NH₄", factor: 1 },
   { key: "N_URE", label: "N-Ureico", factor: 1 },
   { key: "N", label: "N", factor: 1 },
@@ -250,6 +252,11 @@ const fertilizantes: Record<
   {
     nombre: string;
     por100: Partial<Record<NutrKey, number>>;
+    ficha: {
+      ph: number;
+      sol: number; // g/L @20°C
+      Ce: number; // dS/m @1g/L
+    };
   }
 > = {
   // NITRATO DE CALCIO
@@ -522,13 +529,77 @@ const fertilizantes: Record<
     por100: {
       N_NH4: 4.5,
       S: 22,
-      ficha: {
-        ph: 5.5,
-        sol: 723,
-        Ce: 1.91,
-      },
+    },
+    ficha: {
+      ph: 5.5,
+      sol: 723,
+      Ce: 1.91,
     },
   },
+
+  // Actine
+  Actine: {
+    nombre: "Actine 46% + NPBT",
+    por100: {
+      N_URE: 46,
+      Fe: 6,
+    },
+    ficha: {
+      ph: 5.8,
+      sol: 1080,
+      Ce: 0.015,
+    },
+  },
+
+
+
+  // NAscent nitro 25
+  Nascent_nitro: {
+    nombre: "Nascent Nitro 25%",
+    por100: {
+      N_NO3: 8.1,
+      N_NH4: 16.7,
+      S: 13,
+    },
+    ficha: {
+      ph: 5.38,
+      sol: 714,
+      Ce: 1.7,
+    },
+  },
+
+
+  // Nitrato de Amonio
+  Nitrato_Amonio: {
+    nombre: "Nitrato de Amonio",
+    por100: {
+      N_NO3: 17,
+      N_NH4: 17,
+    },
+    ficha: {
+      ph: 5.20,
+      sol: 700,
+      Ce: 1.6,
+    },
+  },
+
+  // Sulfato de Fierro
+  Sulfato_Fierro: {
+    nombre: "Sulfato de Fierro",
+    por100: {
+      Fe: 19,
+    },
+    ficha: {
+      ph: 0,
+      sol: 0,
+      Ce: 0,
+    },
+  },
+
+
+
+
+
 };
 
 /**
