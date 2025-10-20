@@ -85,11 +85,11 @@
                 </tr>
 
                 <!-- Fila 2: Porcentajes -->
-                <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                <!-- <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                   <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
                     {{ porcentajes[col.key].toFixed(2) }}%
                   </td>
-                </tr>
+                </tr> -->
               </tbody>
             </table>
           </div>
@@ -168,18 +168,28 @@
           <!-- Nuevo: Porcentajes ajustados (multiplicados por factor de columna) -->
           <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
-              Porcentajes ajustados (factor columnas)
+              Porcentajes ajustados
             </summary>
 
-            <div class="mt-3">
-              <div class="text-xs grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2">
-                <div v-for="col in columnas" :key="col.key" class="truncate">
-                  <div class="text-gray-500">{{ col.key }}:</div>
-                  <div class="ml-1 font-medium">
-                    {{ porcentajesFactor[col.key].toFixed(2) }}%
-                  </div>
-                </div>
-              </div>
+            <div class="mt-3 overflow-auto rounded-lg border">
+              <table class="min-w-full text-sm">
+                <thead class="bg-gray-50 dark:bg-gray-800">
+                  <tr class="bg-white dark:bg-gray-800">
+                    <th v-for="col in columnas" :key="col.key"
+                      class="px-3 py-2 text-left font-medium text-gray-600 dark:text-gray-300">
+                      {{ col.label2 }}
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
+                    <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
+                      {{ (porcentajesFactor[col.key] ?? 0).toFixed(2) }}%
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </details>
 
@@ -212,8 +222,8 @@ const porcentajesFactor = computed(() => {
   const result: Record<NutrKey, number> = {} as any;
   for (const col of columnas) {
     const key = col.key;
-    const pct = porcentajes.value[key] ?? 0; // porcentaje (0-100)
-    result[key] = pct * (col.factor ?? 1);
+    const value = totales.value[key] ?? 0; // valor absoluto (misma unidad que totales)
+    result[key] = value * (col.factor ?? 1);
   }
   return result;
 });
@@ -223,22 +233,22 @@ const porcentajesFactor = computed(() => {
  * Columnas estándar del balance
  */
 const columnas = [
-  { key: "N_NO3", label: "N-NO₃", factor: 1, label2: "" },
-  { key: "N_NH4", label: "N-NH₄", factor: 1 },
-  { key: "N_URE", label: "N-Ureico", factor: 1 },
-  { key: "N", label: "N", factor: 1 },
-  { key: "P", label: "P₂O₅", factor: 0.4364 },
-  { key: "K", label: "K₂O", factor: 0.8302 },
-  { key: "Cl", label: "Cl", factor: 1 },
-  { key: "S", label: "S", factor: 1 },
-  { key: "MgO", label: "MgO", factor: 0.603 },
-  { key: "CaO", label: "CaO", factor: 0.714 },
-  { key: "B", label: "B", factor: 1 },
-  { key: "Fe", label: "Fe", factor: 1 },
-  { key: "Zn", label: "Zn", factor: 1 },
-  { key: "Cu", label: "Cu", factor: 1 },
-  { key: "Mn", label: "Mn", factor: 1 },
-  { key: "Mo", label: "Mo", factor: 1 },
+  { key: "N_NO3", label: "N-NO₃", factor: 0.2259, label2: "N-NO₃" },
+  { key: "N_NH4", label: "N-NH₄", factor: 1, label2: "N-NH₄" },
+  { key: "N_URE", label: "N-Ureico", factor: 1, label2: "N-Ureico" },
+  { key: "N", label: "N", factor: 1, label2: "N" },
+  { key: "P", label: "P₂O₅", factor: 0.4364, label2: "P" },
+  { key: "K", label: "K₂O", factor: 0.8302, label2: "K" },
+  { key: "Cl", label: "Cl", factor: 1, label2: "Cl" },
+  { key: "S", label: "S", factor: 1, label2: "S" },
+  { key: "MgO", label: "MgO", factor: 0.603, label2: "Mg" },
+  { key: "CaO", label: "CaO", factor: 0.714, label2: "Ca" },
+  { key: "B", label: "B", factor: 1, label2: "B" },
+  { key: "Fe", label: "Fe", factor: 1, label2: "Fe" },
+  { key: "Zn", label: "Zn", factor: 1, label2: "Zn" },
+  { key: "Cu", label: "Cu", factor: 1, label2: "Cu" },
+  { key: "Mn", label: "Mn", factor: 1, label2: "Mn" },
+  { key: "Mo", label: "Mo", factor: 1, label2: "Mo" },
 ] as const;
 
 type NutrKey = (typeof columnas)[number]["key"];
