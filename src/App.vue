@@ -119,7 +119,7 @@
 
           <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
-              Propiedades de la mezcla
+              Datos Teóricos
             </summary>
 
             <div class="mt-3 space-y-3">
@@ -168,7 +168,7 @@
           <!-- Nuevo: Porcentajes ajustados (multiplicados por factor de columna) -->
           <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
             <summary class="cursor-pointer text-sm font-medium">
-              Porcentajes ajustados
+              Unidades de fertilizantes
             </summary>
 
             <div class="mt-3 overflow-auto rounded-lg border">
@@ -185,13 +185,56 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                   <tr class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200">
                     <td v-for="col in columnas" :key="col.key" class="px-3 py-2">
-                      {{ (porcentajesFactor[col.key] ?? 0).toFixed(2) }}%
+                      {{ (porcentajesFactor[col.key] ?? 0).toFixed(3) }}
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </details>
+
+          <!-- Relacion npk -->
+          <!-- Reemplaza el contenido interno del detalle "Relaciones N-P-K" por esto -->
+          <details class="rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+            <summary class="cursor-pointer text-sm font-medium">
+              Relaciones N-P-K
+            </summary>
+
+            <div class="mt-3 space-y-3">
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">N / P₂O₅</div>
+                <div class="mt-2 text-xs">
+                  <span class="text-gray-500">Valor:</span>
+                  <span class="ml-1 font-medium">{{ relacionNPStr }}</span>
+                </div>
+              </div>
+
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">N / K₂O</div>
+                <div class="mt-2 text-xs">
+                  <span class="text-gray-500">Valor:</span>
+                  <span class="ml-1 font-medium">{{ relacionNKStr }}</span>
+                </div>
+              </div>
+
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">K₂O / MgO</div>
+                <div class="mt-2 text-xs">
+                  <span class="text-gray-500">Valor:</span>
+                  <span class="ml-1 font-medium">{{ relacionKMgStr }}</span>
+                </div>
+              </div>
+
+              <div class="rounded border p-2">
+                <div class="text-sm font-semibold">CaO / MgO</div>
+                <div class="mt-2 text-xs">
+                  <span class="text-gray-500">Valor:</span>
+                  <span class="ml-1 font-medium">{{ relacionCaMgStr }}</span>
+                </div>
+              </div>
+            </div>
+          </details>
+
 
         </div>
       </article>
@@ -764,6 +807,45 @@ const solMezcla = computed(() => {
   }, 0)
   return sumatoria > 0 ? sumatoria / 1000 : 0  // g/L @20°C
 })
+
+
+// helper: mapa de factores desde `columnas`
+const factorMap = Object.fromEntries(columnas.map(c => [c.key, c.factor ?? 1])) as Record<string, number>;
+
+// obtiene valor elemental (totales * factor de la columna)
+function elemento(key: keyof typeof factorMap) {
+  const raw = (totales.value as any)[key] ?? 0;
+  return raw;
+}
+
+// relaciones (usando valores elementales)
+const relacionNP = computed(() => {
+  const N = elemento("N");
+  const P = elemento("P");
+  return P > 0 ? P / N : NaN;
+});
+const relacionNK = computed(() => {
+  const N = elemento("N");
+  const K = elemento("K");
+  return K > 0 ? K / N : NaN;
+});
+const relacionKMg = computed(() => {
+  const K = elemento("K");
+  const Mg = elemento("MgO");
+  return Mg > 0 ? K / Mg : NaN;
+});
+const relacionCaMg = computed(() => {
+  const Ca = elemento("CaO");
+  const Mg = elemento("MgO");
+  return Mg > 0 ? Ca / Mg : NaN;
+});
+
+// strings formateadas para plantilla
+const relacionNPStr = computed(() => Number.isFinite(relacionNP.value) ? relacionNP.value.toFixed(2) : "—");
+const relacionNKStr = computed(() => Number.isFinite(relacionNK.value) ? relacionNK.value.toFixed(2) : "—");
+const relacionKMgStr = computed(() => Number.isFinite(relacionKMg.value) ? relacionKMg.value.toFixed(2) : "—");
+const relacionCaMgStr = computed(() => Number.isFinite(relacionCaMg.value) ? relacionCaMg.value.toFixed(2) : "—");
+
 
 
 </script>
