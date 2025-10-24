@@ -4,9 +4,14 @@
       <!-- Card izquierda: Entradas -->
       <!----------------------------->
       <article class="flex flex-col rounded-xl border bg-white dark:bg-gray-800 shadow-sm md:col-span-1">
-        <header class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl">
-          <h2 class="text-sm font-semibold">Entradas de mezcla</h2>
+        <header
+          class="sticky top-0 z-10 border-b bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3 rounded-t-xl flex items-center space-x-2">
+          <img src="./assets/logo.png" width="30" alt="Logo" />
+          <h2 class="text-sm font-semibold">
+            BLENDER SOLUBLES - Entradas de mezcla
+          </h2>
         </header>
+
 
         <div class="min-h-0 grow overflow-y-auto p-4 space-y-4">
           <div class="flex items-center justify-between">
@@ -45,7 +50,7 @@
 
             <!-- Aportes por fila -->
             <!--------------------->
-            <div v-if="e.productoKey"
+            <!-- <div v-if="e.productoKey"
               class="text-xs text-gray-700 dark:text-gray-200 grid grid-cols-2 md:grid-cols-5 gap-x-4 gap-y-2 overflow-auto">
               <div v-for="col in columnas" :key="col.key">
                 <span class="text-gray-500 dark:text-gray-400">{{ col.label }}:</span>
@@ -53,7 +58,7 @@
                   aporteFila(e)[col.key].toFixed(2)
                 }}</span>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </article>
@@ -202,10 +207,10 @@
 
             <div class="mt-3 space-y-3">
               <div class="rounded border p-2">
-                <div class="text-sm font-semibold">N / P₂O₅</div>
+                <div class="text-sm font-semibold">N / P₂O₅ </div>
                 <div class="mt-2 text-xs">
                   <span class="text-gray-500">Valor:</span>
-                  <span class="ml-1 font-medium">{{ relacionNPStr }}</span>
+                  <span class="ml-1 font-medium"> 1 : {{ relacionNPStr }}</span>
                 </div>
               </div>
 
@@ -213,23 +218,23 @@
                 <div class="text-sm font-semibold">N / K₂O</div>
                 <div class="mt-2 text-xs">
                   <span class="text-gray-500">Valor:</span>
-                  <span class="ml-1 font-medium">{{ relacionNKStr }}</span>
+                  <span class="ml-1 font-medium"> 1 : {{ relacionNKStr }}</span>
                 </div>
               </div>
 
               <div class="rounded border p-2">
-                <div class="text-sm font-semibold">K₂O / MgO</div>
+                <div class="text-sm font-semibold"> K₂O / 1:MgO</div>
                 <div class="mt-2 text-xs">
                   <span class="text-gray-500">Valor:</span>
-                  <span class="ml-1 font-medium">{{ relacionKMgStr }}</span>
+                  <span class="ml-1 font-medium">{{ relacionKMgStr }} : 1 </span>
                 </div>
               </div>
 
               <div class="rounded border p-2">
-                <div class="text-sm font-semibold">CaO / MgO</div>
+                <div class="text-sm font-semibold"> CaO / 1:MgO</div>
                 <div class="mt-2 text-xs">
                   <span class="text-gray-500">Valor:</span>
-                  <span class="ml-1 font-medium">{{ relacionCaMgStr }}</span>
+                  <span class="ml-1 font-medium">{{ relacionCaMgStr }} : 1 </span>
                 </div>
               </div>
             </div>
@@ -650,6 +655,18 @@ const fertilizantes: Record<
   },
 
 
+  // AFO
+  Acido_fosforico: {
+    nombre: "Ácido Fosfórico",
+    por100: {
+      P: 58.22,
+    },
+    ficha: {
+      ph: 2.6,
+      sol: 1800,
+      Ce: 2.15,
+    },
+  },
 
 
 
